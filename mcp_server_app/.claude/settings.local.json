@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__flutter-vm__flutter_navigate_to",
+      "mcp__flutter-vm__flutter_get_text",
+      "mcp__flutter-vm__flutter_tap",
+      "mcp__flutter-vm__flutter_get_widget_tree",
+      "mcp__flutter-vm__flutter_enter_text"
+    ]
+  }
+}
