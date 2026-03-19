@@ -1,0 +1,27 @@
+# ===========================
+# Node.js / Express flutter-mcp-server
+# ===========================
+flutter-mcp-server/node_modules/
+flutter-mcp-server/.env
+flutter-mcp-server/npm-debug.log*
+flutter-mcp-server/yarn-debug.log*
+flutter-mcp-server/yarn-error.log*
+flutter-mcp-server/.DS_Store
+
+# ===========================
+# Flutter App
+# ===========================
+mcp_server_app/.dart_tool/
+mcp_server_app/build/
+mcp_server_app/.flutter-plugins
+mcp_server_app/.flutter-plugins-dependencies
+mcp_server_app/.packages
+mcp_server_app/pubspec.lock
+mcp_server_app/.DS_Store
+
+# ===========================
+# General
+# ===========================
+.DS_Store
+Thumbs.db
+*.log
