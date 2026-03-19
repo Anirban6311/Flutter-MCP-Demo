@@ -4,6 +4,22 @@ Control a live Flutter app with AI. This MCP (Model Context Protocol) server bri
 
 ---
 
+## 📁 Repository Structure
+
+```
+flutter-mcp-tester/
+├── flutter-mcp-server/         # Node.js MCP server
+│   ├── flutter_mcp_server.js
+│   ├── package.json
+│   └── README.md
+└── (your-flutter-app)/         # Flutter app
+    ├── lib/
+    │   └── main.dart
+    └── pubspec.yaml
+```
+
+---
+
 ## ✨ What It Does
 
 | Claude says... | What happens on the emulator |
@@ -21,7 +37,7 @@ Control a live Flutter app with AI. This MCP (Model Context Protocol) server bri
 ```
 Claude Code (Terminal)
         ↕  MCP Protocol (stdio)
-   MCP Server (Node.js)
+   MCP Server (Node.js)  ← flutter-mcp-server/
         ↕  WebSocket — Dart VM Service Protocol
    Flutter App (running on emulator/device)
         ↕
@@ -39,52 +55,35 @@ Claude Code (Terminal)
 
 ---
 
-## 🚀 Setup Guide
+## 🚀 Local Setup Guide
 
-### 1. Clone the MCP Server
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/flutter-mcp-server.git
-cd flutter-mcp-server
+git clone https://github.com/your-username/flutter-mcp-tester.git
+cd flutter-mcp-tester
 ```
 
-### 2. Install Dependencies
+### 2. Setup the MCP Server
 
 ```bash
+cd flutter-mcp-server
 npm install
 ```
 
-### 3. Enable ES Modules
-
-Make sure your `package.json` contains `"type": "module"`:
-
-```json
-{
-  "name": "flutter-mcp-server",
-  "version": "1.0.0",
-  "type": "module",
-  "main": "flutter_mcp_server.js",
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0",
-    "ws": "^8.0.0"
-  }
-}
-```
-
-If it's missing, run:
-
-```bash
-node -e "const fs=require('fs'),p=JSON.parse(fs.readFileSync('package.json'));p.type='module';fs.writeFileSync('package.json',JSON.stringify(p,null,2))"
-```
-
-### 4. Test the Server Starts
-
+**Test the server starts correctly:**
 ```bash
 node flutter_mcp_server.js
 # Expected output: Flutter MCP Server v2 running...
 ```
-
 Press `Ctrl+C` to stop — this just confirms it works.
+
+### 3. Setup the Flutter App
+
+```bash
+cd ../your-flutter-app    # replace with your actual flutter app folder name
+flutter pub get
+```
 
 ---
 
@@ -200,16 +199,17 @@ void dispose() {
 ### 3. Use `navigatorKey` in `MaterialApp`
 
 ```dart
-// MaterialApp(
-//   navigatorKey: navigatorKey, // 👈 required for MCP navigation
-//   initialRoute: '/login',
-//   routes: { ... },
-// )
+MaterialApp(
+  navigatorKey: navigatorKey, // 👈 required for MCP navigation
+  initialRoute: '/login',
+  routes: { ... },
+)
 ```
 
-### 4. Run the App with VM Service Exposed
+### 4. Run the Flutter App with VM Service Exposed
 
 ```bash
+# from inside your flutter app folder
 flutter run --observe --observatory-port=8181 --disable-service-auth-codes
 ```
 
@@ -222,8 +222,18 @@ A Dart VM Service is available at: http://127.0.0.1:8181/ws
 
 ## 🔧 Register the MCP Server with Claude Code
 
+> Make sure you use the **absolute path** to `flutter_mcp_server.js` inside the `flutter-mcp-server` folder.
+
+**Windows:**
 ```bash
-claude mcp add flutter-vm node /absolute/path/to/flutter_mcp_server.js \
+claude mcp add flutter-vm node C:\path\to\flutter-mcp-tester\flutter-mcp-server\flutter_mcp_server.js \
+  -s user \
+  -e FLUTTER_VM_URL=ws://127.0.0.1:8181/ws
+```
+
+**Mac/Linux:**
+```bash
+claude mcp add flutter-vm node /absolute/path/to/flutter-mcp-tester/flutter-mcp-server/flutter_mcp_server.js \
   -s user \
   -e FLUTTER_VM_URL=ws://127.0.0.1:8181/ws
 ```
@@ -231,14 +241,14 @@ claude mcp add flutter-vm node /absolute/path/to/flutter_mcp_server.js \
 Verify it was added:
 ```bash
 claude mcp list
-# flutter-vm: node /path/to/flutter_mcp_server.js
+# flutter-vm: node /path/to/flutter-mcp-server/flutter_mcp_server.js
 ```
 
 ---
 
 ## 🎮 Running Claude Code
 
-Open Claude Code in a new terminal:
+Open Claude Code in a **new terminal**:
 
 ```bash
 claude
@@ -300,22 +310,6 @@ Run a complete QA journey: login → counter (increment/reset) →
 settings (toggle dark mode, change language, save) →
 profile (edit name, save). After each screen assert the action
 succeeded. Print a final PASS/FAIL report.
-```
-
----
-
-## 🗂️ Project Structure
-
-```
-flutter-mcp-server/
-├── flutter_mcp_server.js   # MCP server — talks to Flutter via VM Service
-├── package.json
-└── README.md
-
-your-flutter-app/
-├── lib/
-│   └── main.dart           # Flutter app with ext.mcptest.* extensions
-└── pubspec.yaml
 ```
 
 ---
